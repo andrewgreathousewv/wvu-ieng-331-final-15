@@ -1,6 +1,7 @@
 -- How has order volume and revenue changed over time?
 -- Parameters: ? = start_date, ? = end_date (pass NULL to skip filtering)
-
+-- -- Added this query in the final milestone to support the Orders Over Time
+-- line chart in the Excel report. Was missing from M2.
 -- Aggregate orders by month to show business growth trends
 WITH monthly AS (
     SELECT

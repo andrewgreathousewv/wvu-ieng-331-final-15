@@ -164,7 +164,7 @@ def get_delivery_analysis(
     """
     logger.info(f"Running delivery analysis | start={start_date} end={end_date}")
     sql = _load_sql("delivery_analysis.sql")
-    return _execute(db_path, sql, [])
+    return _execute(db_path, sql, [start_date, start_date, end_date, end_date])
 
 
 def get_cohort_retention(

@@ -196,6 +196,34 @@ def get_cohort_retention(
     return _execute(db_path, sql, [start_date, start_date, end_date, end_date])
 
 
+def get_orders_over_time(
+    db_path: str,
+    start_date: str | None = None,
+    end_date: str | None = None,
+) -> pl.DataFrame:
+    """Run the orders over time query and return monthly order volume and revenue.
+
+    Aggregates orders by month to show business growth trends over time.
+    Useful for identifying seasonal patterns and overall business trajectory.
+
+    Args:
+        db_path: Path to the DuckDB database file.
+        start_date: ISO date string for the earliest order date. None = no filter.
+        end_date: ISO date string for the latest order date. None = no filter.
+
+    Returns:
+        A Polars DataFrame with columns: order_month, total_orders, total_revenue.
+        Ordered by order_month ascending.
+
+    Raises:
+        FileNotFoundError: If the SQL file or database file is not found.
+        duckdb.Error: If the query fails.
+    """
+    logger.info(f"Running orders over time | start={start_date} end={end_date}")
+    sql = _load_sql("orders_over_time.sql")
+    return _execute(db_path, sql, [start_date, start_date, end_date, end_date])
+
+
 # The queries.py is the data access layer.
 # Reads the SQL files from the sql/ folder and runs them against the DuckDB database.
 # Returns the results as Polars DataFrames that the rest of the pipeline can use.

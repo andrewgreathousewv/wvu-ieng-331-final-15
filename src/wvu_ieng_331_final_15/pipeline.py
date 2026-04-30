@@ -23,7 +23,7 @@ import duckdb
 import polars as pl
 from loguru import logger
 
-from wvu_ieng_331_final_15 import queries, validation
+from wvu_ieng_331_final_15 import queries, report, validation
 
 # Default database location: repo_root/data/olist.duckdb
 # __file__ = src/wvu_ieng_331_m2_3/pipeline.py  → go up 4 levels to repo root
@@ -313,6 +313,13 @@ def main() -> None:
         delivery = pl.DataFrame()
 
     try:
+        orders_time = queries.get_orders_over_time(db_path, start, end)
+        logger.info(f"  Orders over time: {len(orders_time):,} months")
+    except (FileNotFoundError, duckdb.Error) as exc:
+        logger.error(f"Orders over time query failed: {exc}")
+        orders_time = pl.DataFrame()
+
+    try:
         retention = queries.get_cohort_retention(db_path, start, end)
         logger.info(f"  Cohort retention: {len(retention)} row(s)")
         if len(retention) > 0:
@@ -326,8 +333,7 @@ def main() -> None:
         logger.error(f"Cohort retention query failed: {exc}")
         retention = pl.DataFrame()
 
-    # Step 3: Write outputs                                                #
-
+    # Step 3: Write outputs
     logger.info("Writing output files...")
     try:
         write_outputs(scorecard, abc, delivery, retention, OUTPUT_DIR)
@@ -335,13 +341,13 @@ def main() -> None:
         logger.error(f"Output write failed: {exc}")
         sys.exit(1)
 
+    report.build_report(scorecard, abc, delivery, retention, orders_time, OUTPUT_DIR)
+
     logger.info("=" * 50)
     logger.info("Pipeline complete. Outputs written to: output/")
     logger.info("=" * 50)
 
 
-if __name__ == "__main__":
-    main()
 # The pipeline is the main script in this project and is used for being the main entry point.
 # Accepts command line arguments such as --seller-state and --start-date.
 # The pipeline orchestrates the full workflow: from validate to query to process to output.

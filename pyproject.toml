@@ -1,0 +1,24 @@
+[project]
+name = "wvu-ieng-331-final-15"
+version = "0.1.0"
+description = "Olist e-commerce analytics pipeline — Team 15"
+readme = "README.md"
+authors = [
+    { name = "Andrew Greathouse", email = "abg00014@mix.wvu.edu" },
+    { name = "Brady Stafford", email = "bas00054@mix.wvu.edu" },
+]
+requires-python = ">=3.13"
+dependencies = [
+    "duckdb>=1.1.0",
+    "polars>=1.0.0",
+    "altair>=5.0.0",
+    "loguru>=0.7.0",
+    "pyarrow>=23.0.1",
+]
+
+[project.scripts]
+wvu-ieng-331-final-15 = "wvu_ieng_331_final_15.pipeline:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

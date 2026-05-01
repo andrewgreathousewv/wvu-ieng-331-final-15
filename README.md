@@ -1,5 +1,5 @@
-# wvu-ieng331-m2-15
-# Milestone 2: Python Pipeline
+# wvu-ieng-331-final-15
+# Final Milestone: Complete Data Product
 
 **Team 15**: Andrew Greathouse, Brady Stafford
 
@@ -8,14 +8,14 @@
 Instructions to run the pipeline from a fresh clone:
 
 ```bash
-git clone https://github.com/andrewgreathousewv/wvu-ieng-331-m2-15.git
-cd wvu-ieng-331-m2-15
+git clone https://github.com/andrewgreathousewv/wvu-ieng-331-final-15.git
+cd wvu-ieng-331-final-15
 uv sync
 # place olist.duckdb in the data/ directory
-uv run wvu-ieng-331-m2-15
-uv run wvu-ieng-331-m2-15 --start-date 2024-01-01 --end-date 2024-12-31
-uv run wvu-ieng-331-m2-15 --seller-state SP
-uv run wvu-ieng-331-m2-15 --start-date 2024-01-01 --seller-state SP
+uv run wvu-ieng-331-final-15
+uv run wvu-ieng-331-final-15 --start-date 2024-01-01 --end-date 2024-12-31
+uv run wvu-ieng-331-final-15 --seller-state SP
+uv run wvu-ieng-331-final-15 --start-date 2024-01-01 --seller-state SP
 ```
 
 ## Parameters
@@ -34,6 +34,7 @@ uv run wvu-ieng-331-m2-15 --start-date 2024-01-01 --seller-state SP
 | `summary.csv` | CSV | ABC inventory tier summary with 3 rows, one for each tier A, B, and C. Shows product count, total revenue, and percentage of total revenue per tier. Open in Excel or Google Sheets. |
 | `detail.parquet` | Parquet | Full seller scorecard with one row per seller. Includes total revenue, on time delivery rate, average review score, cancellation rate, and a composite rank score. Lower composite score means better overall seller. |
 | `chart.html` | HTML | Bar chart showing the top 15 customer states ranked by average delivery delay compared to the estimated date. Open in any browser. Red bars mean most delayed, green bars mean arrived early. |
+| `report.xlsx` | Excel | Full business intelligence report with 5 sheets, 4 embedded charts, and an analytical narrative. Open in Microsoft Excel. |
 
 ## Validation Checks
 
@@ -63,3 +64,30 @@ The pipeline runs four checks before any analysis. If a check fails it logs a wa
 - Retention rates might be slightly underestimated because Olist creates a new customer ID for the same person if they use a different email or device, we use customer_unique_id to fix this but it is not perfect
 - The chart only shows the top 15 states by delay to keep it readable, all states are still included in the output files
 - The pipeline does not halt if validation fails, it continues and logs a warning so outputs could be incomplete if the database has serious issues
+
+## Final Deliverable
+
+**Format:** Excel workbook (`report.xlsx`)
+
+We chose Excel because it opens in software every manager already has, requires no installation, and supports embedded charts with professional formatting across multiple sheets.
+
+### What We Added in the Final Milestone
+
+We added a new SQL query (`orders_over_time.sql`) and a corresponding Python function (`get_orders_over_time()` in `queries.py`) that was not part of Milestone 1 or 2. This was necessary because the rubric requires at least one visualization showing change over time, and none of our original M1/M2 queries aggregated data by month. The new query groups orders by month and calculates total order volume and revenue, which powers the line chart in the Orders Over Time sheet.
+
+### Visualizations
+
+| Sheet | Chart Type | What It Shows |
+|-------|-----------|---------------|
+| Orders Over Time | Line chart | Monthly order volume from Nov 2023 to Nov 2025, showing overall business growth trajectory and seasonal patterns |
+| Seller Scorecard | Bar chart | Top 20 sellers ranked by total revenue, for identifying high-value seller relationships |
+| Delivery Analysis | Bar chart | Average delivery delay vs. estimated date by Brazilian state, showing regional delivery inequality |
+| ABC Classification | Column chart | Revenue share by inventory tier (A/B/C), illustrating the Pareto concentration of revenue |
+
+### Analytical Narrative
+
+The report tells a coherent business story across five sheets. The Executive Summary identifies three critical challenges facing Olist: extremely low customer retention (under 2% return within 90 days), regional delivery inequality, and heavy revenue concentration in Class A products. Each subsequent sheet dives deeper into one of these challenges with data, a chart, and a concrete recommendation. The Orders Over Time sheet provides context by showing the overall growth trajectory of the business before diving into the problem areas.
+
+### How to Open
+
+After running the pipeline, open `output/report.xlsx` in Microsoft Excel. The workbook contains 5 sheets — start with **Executive Summary** for the full business narrative, then explore individual analysis sheets. No additional software or installation required.
